@@ -1,0 +1,615 @@
+/* ================== RESET & BASE ================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #003f4a;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  padding-top: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+  background-image: none;
+}
+
+/* Estilo usuario en barra */
+.usuario-derecha {
+  position: absolute;
+  top: 4rem;
+  right: 4rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  background: rgba(0,0,0,0.5);
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.5rem;
+  pointer-events: none;
+  animation: pulse 2s infinite;
+  z-index: 1000;
+}
+
+@keyframes pulse {
+  0%   { transform: scale(1);   box-shadow: 0 0 0 rgba(255,255,255,0.7); }
+  50%  { transform: scale(1.05); box-shadow: 0 0 8px rgba(255,255,255,0.7); }
+  100% { transform: scale(1);   box-shadow: 0 0 0 rgba(255,255,255,0.7); }
+}
+
+/* ================== CONTENEDOR PRINCIPAL ================== */
+.container {
+  width: 700px;
+  height: 700px;
+  background: url('vrb0.webp') center/cover no-repeat,
+              rgba(85, 49, 130, 0.7); /* imagen + color semitransparente encima */
+  background-blend-mode: overlay;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  padding: 30px;
+}
+
+/* ================== PANTALLAS ================== */
+.screen {
+  text-align: center;
+}
+.hidden {
+  display: none;
+}
+#start-screen,
+#end-screen {
+  position: relative;
+  height: 100%;
+}
+#start-screen h1,
+#end-screen h1 {
+  padding: 15px;
+  color: #ffeb3b;
+}
+
+#start-screen .btn,
+#end-screen .btn {
+  position: absolute;
+  top: 37%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  width: 130px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.screen .description {
+  position: absolute;
+  top: 150px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #c3a88a;
+  font-size: 1.3rem;
+  text-align: center;
+  padding: 10px;
+}
+
+.screen p:not(.description) {
+  margin-top: 10px;
+  font-size: 1.4rem;
+  color: #ffffff;
+  text-align: center;
+}
+
+/* ================== BOTONES ================== */
+.btn {
+  padding: 10px 30px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.btn:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.btn:active {
+  transform: scale(0.95);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* ================== HUD ================== */
+.hud {
+  display: flex;
+  justify-content: space-between;
+  margin: 30px 0 20px;
+}
+
+.hud div {
+  font-size: 1.4rem;
+  color: #abffa0;
+}
+
+/* ================== TARJETA DE JUEGO ================== */
+#card {
+  text-align: center;
+  margin-top: 30px;
+}
+#card-img {
+  width: 320px;
+  height: 300px;
+  object-fit: contain;
+  border: 5px solid transparent;
+  border-radius: 15px;
+  transition: border-color 0.3s;
+}
+#card-word {
+  margin: 10px 0;
+  font-size: 2.5rem;
+  color: #ffeb3b;
+  padding: 10px;
+  font-weight: bold;
+}
+
+/* ================== OPCIONES ================== */
+#options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  max-width: 400px;
+  margin: 30px auto 0;
+}
+.option {
+  padding: 11px;
+  background: #e4e4d7;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.option:hover {
+  background: #e0e0e0;
+}
+.option span {
+  display: inline-block;
+  font-size: 1.3rem;
+  transition: color 0.3s, transform 0.3s;
+  color: #333333;
+}
+.option.correct span {
+  color: green;
+  transform: scale(1.2);
+}
+.option.incorrect span {
+  color: red;
+  transform: scale(1.2);
+}
+.option.correct {
+  background-color: #b3eac0;
+}
+.option.incorrect {
+  background-color: #d59ca1;
+}
+
+/* ================== FONDO DEL JUEGO ================== */
+#game-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('vrb0.webp') center/cover no-repeat;
+}
+
+/* ================== CONFETI ================== */
+.confetti {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background-color: var(--confetti-color);
+  animation: confetti-fall 1s ease-out forwards;
+}
+
+/* ================== BONO DE RACHA ================== */
+#streak-bonus {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 3rem;
+  color: gold;
+  pointer-events: none;
+}
+
+/* ================== ANIMACIONES ================== */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-20px); }
+  60% { transform: translateY(-10px); }
+}
+@keyframes shrink {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.8); }
+  100% { transform: scale(1); }
+}
+@keyframes shrink-pop {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(0.8); }
+}
+@keyframes confetti-fall {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(300px) rotate(360deg); opacity: 0; }
+}
+@keyframes bonus-fade {
+  0%   { opacity: 0; transform: scale(0.5); }
+  50%  { opacity: 1; transform: scale(1.2); }
+  100% { opacity: 0; transform: scale(1); }
+}
+@keyframes blink {
+  0%, 100% { color: #abffa0; }
+  50% { color: red; }
+}
+
+/* ================== CLASES DE EFECTOS ================== */
+.bounce {
+  animation: bounce 0.6s ease;
+}
+.shrink {
+  animation: shrink 0.4s ease;
+}
+.shrink-pop {
+  animation: shrink-pop 0.4s ease;
+}
+.streak-anim {
+  animation: bonus-fade 1s ease;
+}
+.timer-warning {
+  animation: blink 1s infinite;
+}
+/* Efecto visual del botón */
+.particle-btn {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid;
+  border-image: linear-gradient(45deg, #00f2ff, #ff00c8) 1;
+  background-color: #000;
+  color: #fff;
+  font-weight: bold;
+  padding: 12px 25px;
+  font-size: 1.4rem;
+  border-radius: 12px; /* Más redondeado */
+  z-index: 1;
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  /* Borde suave o glow */
+  box-shadow: 0 0 12px rgba(0, 242, 255, 0.4), 0 0 20px rgba(255, 0, 200, 0.2);
+}
+
+.particle-btn:hover {
+  background-color: #111;
+  color: #ffeb3b;
+
+  /* Glow más intenso al hacer hover */
+  box-shadow: 0 0 18px rgba(0, 242, 255, 0.6), 0 0 30px rgba(255, 0, 200, 0.3);
+}
+
+/* Partículas internas */
+.particle-btn::before,
+.particle-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.2) 20%, transparent 60%);
+  border-radius: 50%; /* Para mantener el estilo suave */
+  z-index: 0;
+}
+
+.particle-btn::before {
+  animation: particle-rotate 4s linear infinite;
+}
+
+.particle-btn::after {
+  animation: particle-rotate 6s linear infinite reverse;
+}
+
+.particle-btn span {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes particle-rotate {
+  0% { transform: rotate(0deg) translateX(0); }
+  100% { transform: rotate(360deg) translateX(0); }
+}
+
+/* ================== TOP 20 PUNTUACIONES ================== */
+@media (max-width: 400px) {
+  #highscores-container {
+    width: 90vw;
+    height: auto;
+    padding: 12px;
+  }
+
+  #specialMessage {
+    font-size: 16px;
+    padding: 8px 16px;
+  }
+}
+/* Ajuste responsivo para el contenedor de puntuaciones */
+@media (max-width: 400px) {
+  #highscores-container {
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  #highScoresList li {
+    font-size: 14px;
+  }
+  #specialMessage {
+    font-size: 16px;
+    padding: 8px 16px;
+    bottom: 5px;
+  }
+}
+
+/* Contenedor principal del top */
+#highscores-container {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  background: rgba(71, 45, 105, 0.85);
+  padding: 15px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 250px;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 1000;
+  text-align: center;
+  box-shadow: 0 0 12px rgba(0,0,0,0.6);
+}
+
+
+/* Scroll solo si hay más de 4 ítems */
+.scroll-wrapper {
+  max-height: 180px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+  margin-top: 0.5rem;
+  border-radius: 4px;
+}
+
+.scroll-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+.scroll-wrapper::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 3px;
+}
+.scroll-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Lista de puntuaciones */
+#highScoresList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+#highScoresList li {
+  padding: 4px 0;
+  font-size: 1rem;
+  color: rgb(240, 240, 240);
+}
+
+/* 1º lugar */
+#highScoresList li.top-1 {
+  font-weight: bold;
+  background: gold;
+  color: black;
+  border-radius: 5px;
+  padding: 4px;
+  animation: crownPulse 1.5s infinite;
+  text-align: center;
+}
+#highScoresList li.top-1::before {
+  content: "👑 ";
+}
+
+/* 2º y 3º lugar */
+#highScoresList li.top-2 {
+  background: silver;
+  color: black;
+  padding: 3px;
+  border-radius: 4px;
+  text-align: center;
+}
+#highScoresList li.top-3 {
+  background: #cd7f32;
+  color: white;
+  padding: 3px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+/* 4º lugar */
+#highScoresList li.top-4 {
+  background: #4e8e55;
+  color: white;
+  padding: 3px;
+  border-radius: 4px;
+}
+
+/* Del 5º al 20º */
+#highScoresList li.secondary-highlight {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ddd;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+/* Resaltado del puntaje reciente */
+#highScoresList li.new-high {
+  background: #9e9e9eae;
+  border-radius: 4px;
+  font-weight: bold;
+  color: rgb(25, 25, 25);
+  padding: 4px;
+}
+
+/* Contorno dorado (top 1-3) */
+.highlight-user-position-gold {
+  border: 3px solid #5eff00;
+  border-radius: 10px;
+  padding: 4px;
+  box-shadow: 0 0 10px #55ff0080;
+}
+
+/* Contorno azul (top 4-20) */
+.highlight-user-position-blue {
+  border: 2px solid #4fc3f7;
+  border-radius: 10px;
+  padding: 4px;
+  box-shadow: 0 0 6px #4fc3f770;
+}
+
+/* Animación de corona */
+@keyframes crownPulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.15) rotate(-2deg); }
+  100% { transform: scale(1); }
+}
+
+/* ================== MENSAJE ESPECIAL ================== */
+
+#specialMessage {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #4caf50, #2e7d32);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  text-align: center;
+  border: 2px solid #ffffffbb;
+  max-width: 90%;
+  white-space: pre-wrap;
+}
+
+#specialMessage.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-10px);
+  pointer-events: auto;
+}
+
+.hidden {
+  display: none !important;
+}
+
+
+@media screen and (max-width: 768px) {
+  .container {
+    width: 90vw;
+    height: 90vw;
+    padding: 20px;
+  }
+
+  #card-img {
+    width: 250px;
+    height: 230px;
+  }
+
+  #card-word {
+    font-size: 2rem;
+  }
+
+  .screen .description {
+    font-size: 1.1rem;
+  }
+
+  .btn {
+    width: 100px;
+    height: 45px;
+    font-size: 1rem;
+  }
+
+  .option span {
+    font-size: 1.1rem;
+  }
+
+  .hud div {
+    font-size: 1.2rem;
+  }
+
+  #streak-bonus {
+    font-size: 2.2rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .container {
+    width: 95vw;
+    height: 95vw;
+    padding: 15px;
+  }
+
+  #card-img {
+    width: 200px;
+    height: 180px;
+  }
+
+  #card-word {
+    font-size: 1.7rem;
+  }
+
+  .screen .description {
+    font-size: 1rem;
+    top: 120px;
+  }
+
+  .btn {
+    width: 90px;
+    height: 40px;
+    font-size: 0.9rem;
+  }
+
+  .option span {
+    font-size: 1rem;
+  }
+
+  .hud {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .hud div {
+    font-size: 1rem;
+  }
+
+  #streak-bonus {
+    font-size: 2rem;
+  }
+}
+#usuarios-en-linea {
+  display: none;
+}
