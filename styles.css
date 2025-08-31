@@ -1,0 +1,610 @@
+  /* Fondo a elegir por mi */
+  body {
+    background: rgb(0, 96, 113); 
+    color: rgb(152, 1, 124);
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+
+  /* Contenedor principal */
+  .container {
+    text-align: center;
+    margin-top: 50px;
+  }
+
+  h1 {
+    margin-top: 20px;
+  }
+ 
+/* Estilos específicos para el formulario de inicio de sesión */
+/* Centrar todo el formulario en la pantalla */
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;  /* Centra verticalmente */
+  min-height: calc(100vh - 106px); /* Ajusta altura dejando espacio para el footer */
+  padding: 20px 0; /* Espacio superior e inferior moderado */
+  box-sizing: border-box;
+}
+
+/* Estilo del formulario con bordes suaves y fondo azul claro semitransparente */
+.login-container {
+    max-width: 400px;
+    padding: 20px;
+    border-radius: 15px; /* Bordes suaves */
+    background: rgba(88, 177, 209, 0.3); /* Azul claro semitransparente */
+    backdrop-filter: blur(8px); /* Efecto de desenfoque */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border: 1.5px solid rgba(190, 111, 255, 0.3);
+    text-align: center;
+}
+
+/* Estilos de los textos */
+.login-container h2 {
+    color: #ececec;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.login-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #ececec;
+}
+
+/* Input con fondo translúcido */
+.login-container input[type="text"] {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    color: #e7e7e7;
+    outline: none;
+    text-align: center;
+}
+
+.login-container input[type="text"]::placeholder {
+    color: rgba(240, 240, 240, 0.7);
+}
+
+/* Botón con efecto */
+.login-container button {
+    width: 80%;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background: none;
+    color: white;
+    border: 0 solid;
+    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0);
+    outline: 1px solid;
+    outline-color: rgba(255, 255, 255, 0.5);
+    outline-offset: 0px;
+    text-shadow: none;
+    transition: all 1.25s cubic-bezier(0.19, 1, 0.22, 1);
+    border-radius: 10px; /* Bordes suaves */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Agregamos un efecto de resplandor */
+.login-container button::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: radial-gradient(circle, rgba(27, 194, 102, 0.4) 10%, transparent 50%);
+    transition: transform 0.5s ease;
+    transform: translate(-50%, -50%) scale(0);
+}
+
+/* Efecto al pasar el mouse */
+.login-container button:hover {
+    border: 1px solid;
+    box-shadow: inset 0 0 20px rgba(8, 183, 174, 0.5),
+        0 0 20px rgba(255, 255, 255, 0.2);
+    outline-color: rgba(33, 192, 41, 0);
+    outline-offset: 8px;
+    text-shadow: 1px 1px 2px #2483ac;
+}
+
+/* Activa el resplandor al hacer hover */
+.login-container button:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.footer {
+  width: 100%;
+  background-color: rgba(80, 80, 80, 0.8);
+  color: rgb(250, 250, 250);
+  text-align: center;
+  padding: 10px 40px; /* Más espacio lateral y vertical */
+  display: flex;
+  justify-content: space-between; /* Separación clara entre secciones */
+  align-items: flex-start;
+  flex-wrap: wrap; /* Para que baje en pantallas pequeñas */
+  gap: 20px; /* Espacio entre bloques */
+  margin-top: 3rem;
+}
+
+.footer-section {
+  flex: 1 1 200px; /* Crece pero mínimo 200px */
+  margin: 0;
+  text-align: left;
+}
+
+.footer-section h3 {
+  margin-bottom: 5px;
+  font-size: 12px;
+}
+
+.footer-section p {
+  font-size: 10px;
+  line-height: 1.3;
+}
+
+.footer-section a {
+  color: #ddd;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.footer-section a:hover {
+  color: white;
+  text-decoration: underline;
+}
+/* ======= Modal Glassmorphism ======= */
+#privacyOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(20, 20, 20, 0.4);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+#privacyOverlay.visible {
+  display: flex;
+}
+
+.privacy-modal {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(16px);
+  padding: 30px;
+  border-radius: 20px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+}
+
+.privacy-modal h2 {
+  margin-bottom: 15px;
+  font-size: 1.5em;
+  color: #fff;
+}
+
+.privacy-modal p {
+  font-size: 1em;
+  margin-bottom: 10px;
+  color: #e0e0e0;
+}
+
+
+  /* Posicionamiento y estilo del nombre de usuario */
+  .usuario-derecha {
+    position: absolute;
+    top: 4rem;  /* <-- Lo subí de 1rem a 2.5rem */
+    right: 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background: rgba(0,0,0,0.5);
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.5rem;
+    pointer-events: none;
+    animation: pulse 2s infinite;
+    z-index: 1000;
+  }
+  .email-container {
+    position: relative;
+    display: inline-block;
+    font-size: 12px;
+}
+
+.copy-notification {
+    display: none;
+    position: absolute;
+    left: 105%; /* A la derecha del correo */
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #4caf50;
+    color: white;
+    padding: 2px 6px;
+    font-size: 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.copy-notification.show {
+    display: inline;
+    opacity: 1;
+}  
+
+/* Animación de pulso */
+@keyframes pulse {
+  0%   { transform: scale(1);   box-shadow: 0 0 0 rgba(255,255,255,0.7); }
+  50%  { transform: scale(1.05); box-shadow: 0 0 8px rgba(255,255,255,0.7); }
+  100% { transform: scale(1);   box-shadow: 0 0 0 rgba(255,255,255,0.7); }
+}
+#contenido-inicio {
+  /* separa todo el bloque del reloj de lo que venga debajo */
+  margin-bottom: 3rem;
+}
+
+#usuarios-en-linea {
+  position: fixed;
+  bottom: 50px;
+  right: 10px;
+  background-color: #222;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  z-index: 1000;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+/* Clase que se activa temporalmente para animar */
+#usuarios-en-linea.actualizado {
+  transform: scale(1.1);
+  background-color: #129975; /* verde suave */
+}
+.clickable {
+  cursor: pointer;
+}
+
+/* --- Reset y tipografía básica --- */
+* { box-sizing: border-box; margin:0; padding:0; }
+body { font-family: Arial, sans-serif; color: #4a4a00; }
+
+/* --- Styles para la sección principal --- */
+.section-title {
+  text-align: center;
+  font-size: 2.6rem;
+  font-weight: bold;
+  margin-top: 2rem;
+  color: #bdca00;
+}
+.section-subtitle {
+  max-width: 600px;
+  font-size: 1.2rem;
+  margin: 0.9rem auto 1.9rem;
+  text-align: center;
+  color: rgb(255, 241, 209);
+  line-height: 1.4;
+}
+.section-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+.btn {
+  text-decoration: none;
+  background: #500085;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-weight: bold;
+}
+.btn-outline {
+  background: transparent;
+  color: #00c237;
+  border: 2px solid #3c0062;
+}
+
+/* --- Layout para cada bloque de juego --- */
+.game-section {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  margin-bottom: 3rem; /* ← espacio entre bloques */
+  overflow: hidden;    /* por si el bg-block se sale */
+}
+
+.game-section.reverse {
+  flex-direction: row-reverse;
+}
+
+/* Fondo gris más amplio: cubre info + parte de la imagen */
+.game-section .bg-block {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 79%;
+  background: rgba(255, 255, 255, 0.2); /* fondo glass */
+  z-index: -1;
+  border-radius: 9px;
+  border: 2px solid rgba(255, 255, 255, 0.2); /* borde semi-transparente */
+  backdrop-filter: blur(10px); /* efecto glass */
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.4), 
+              0 0 20px rgba(0, 255, 255, 0.3),
+              0 0 40px rgba(0, 255, 255, 0.2); /* resplandor neon */
+  transition: transform 0.6s ease, box-shadow 0.4s ease;
+  transform: scale(1);
+}
+
+.game-section .bg-block.zoom-effect {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.6), 
+              0 0 30px rgba(0, 255, 255, 0.4),
+              0 0 60px rgba(0, 255, 255, 0.3);
+}
+@keyframes neonPulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.4), 
+                0 0 20px rgba(0, 255, 255, 0.3),
+                0 0 40px rgba(0, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.6), 
+                0 0 30px rgba(0, 255, 255, 0.4),
+                0 0 60px rgba(0, 255, 255, 0.3);
+  }
+}
+
+.game-section .bg-block {
+  animation: neonPulse 3s infinite ease-in-out;
+}
+
+
+/* Posición izquierda para sección normal */
+.game-section:not(.reverse) .bg-block {
+  left: 20%;                    /* ← deja 30% de la imagen sin cubrir */
+}
+
+/* Posición derecha para sección reversa */
+.game-section.reverse .bg-block {
+  right: 20%;                   /* ← deja 30% de la imagen sin cubrir */
+}
+
+.game-image img {
+  width: 100%;
+  width: 500px;
+  max-width: 700px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+.game-image img {
+  width: 100%;
+  max-width: 700px;
+  border-radius: 8px;
+  object-fit: cover;
+  -webkit-mask-image: radial-gradient(ellipse at center, black 60%, transparent 100%);
+  mask-image: radial-gradient(ellipse at center, black 60%, transparent 100%);
+}
+
+
+.game-info {
+  max-width: 500px;
+  z-index: 1;
+}
+
+.game-nav {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.game-nav a {
+  text-decoration: none;
+  color: #333;
+  padding-bottom: 2px;
+  border-bottom: 2px solid transparent;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.game-nav a.active {
+  color: #afca00;
+  border-color: #5b009d;
+}
+
+.game-info h3 {
+  margin: 0.5rem 0;
+  font-size: 1.75rem;
+  color: #ecc100; /* ← Cambia este color a lo que quieras */
+}
+
+
+.tags {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: rgb(232, 232, 232);
+  background: #540091;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.description {
+  max-width: 800px; /* Puedes ajustar este valor */
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  color: rgb(231, 231, 231);
+  margin-left: auto;
+  margin-right: auto; /* Centra el texto si está en un contenedor más ancho */
+}
+
+
+.btn-sm {
+  text-decoration: none;
+  font-weight: bold;
+  color: #17c297;
+  font-size: 0.9rem;
+}
+
+/* --- RESPONSIVO --- */
+@media (max-width: 768px) {
+  .game-section {
+    flex-direction: column;
+  }
+
+  .game-section.reverse {
+    flex-direction: column;
+  }
+
+  .game-section .bg-block {
+    display: none; /* Oculta el fondo gris en pantallas pequeñas */
+  }
+
+  .game-image img,
+  .game-info {
+    max-width: 100%;
+  }
+
+  .section-title {
+    font-size: 2rem;
+  }
+
+  /* Mejora contraste del texto en fondo oscuro */
+  .game-info h3 {
+    color: #ffe600; /* amarillo claro */
+  }
+
+  .description {
+    color: #ffffff; /* blanco */
+  }
+
+  .tags {
+    background: #ffe600;
+    color: #222;
+  }
+
+  .game-nav a {
+    color: #ffffff;
+  }
+
+  .game-nav a.active {
+    color: #ffe600;
+    border-color: #ffe600;
+  }
+  .btn-sm {
+    color: #ffe600;
+  }
+}
+
+@media (min-width: 1200px) {
+  .section-title {
+    font-size: 3rem;
+  }
+
+  .section-subtitle {
+    font-size: 1.4rem;
+    max-width: 700px;
+  }
+
+  .section-buttons .btn {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+  }
+
+  .game-section {
+    gap: 3rem;
+    padding: 3rem 5rem;
+    margin-bottom: 5rem;
+  }
+
+  .game-section .bg-block {
+    width: 85%; /* más ancho para pantallas grandes */
+    border-radius: 12px;
+  }
+
+  .game-section:not(.reverse) .bg-block {
+    left: 15%;
+  }
+
+  .game-section.reverse .bg-block {
+    right: 15%;
+  }
+
+  .game-info {
+    max-width: 600px;
+  }
+
+  .game-image img {
+    max-width: 600px;
+  }
+
+  .game-info h3 {
+    font-size: 2rem;
+  }
+
+  .description {
+    max-width: 1000px;
+    font-size: 1.1rem;
+  }
+}
+.extra-info {
+  margin-top: 20px;
+  padding: 20px 22px;
+  background-color: rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  font-size: 1rem;
+  line-height: 1.7;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-10px);
+  color: #fff; /* ← texto claro */
+  box-shadow: none;
+  transition: 
+    max-height 0.5s ease,
+    opacity 0.5s ease,
+    transform 0.5s ease,
+    box-shadow 0.3s ease;
+}
+
+/* Cuando se muestra */
+.extra-info.show {
+  max-height: 1000px;
+  opacity: 1;
+  transform: translateY(0);
+  box-shadow: 0 10px 20px rgba(255, 255, 255, 0.25);
+}
+
+/* Espaciado interno entre párrafos y elementos de lista */
+.extra-info p,
+.extra-info li {
+  margin-bottom: 12px;
+}
+
+
+

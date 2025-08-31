@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Referrer-Policy" content="no-referrer">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'; ">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio de Sesión</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="login.js"></script>
+  <script defer src="footer.js"></script>
+</head>
+<body>
+  <div class="login-wrapper">
+    <div class="login-container">
+      <h2>Bienvenido</h2>
+      <form id="login-form">
+        <label for="username">Nombre de usuario:</label>
+        <input 
+          type="text" 
+          id="username" 
+          name="username" 
+          maxlength="10" 
+          pattern="[A-Za-z0-9]+" 
+          title="Solo se permiten caracteres alfanuméricos (máximo 10 caracteres)" 
+          required>
+        <button type="submit" class="btn-5">Iniciar Sesión</button>
+      </form>
+    </div>    
+  </div>
+
+  <script>
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const user = document.getElementById('username').value.trim();
+      if (!/^[A-Za-z0-9]{1,10}$/.test(user)) {
+        alert("Nombre de usuario inválido.");
+        return;
+      }
+      sessionStorage.setItem('username', user); 
+      window.location.href = 'principal.html';
+    });
+
+    // Detección de DevTools
+    setInterval(function () {
+      const start = new Date();
+      debugger;
+      const end = new Date();
+      if (end - start > 100) {
+        alert("No está permitido inspeccionar esta página.");
+        window.location.href = "about:blank";
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Referrer-Policy" content="no-referrer">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=()">
+  <meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' https://www.gstatic.com https://www.googleapis.com https://*.firebaseio.com;
+  connect-src 'self' https://*.firebaseio.com;
+  style-src 'self';
+  img-src 'self' data:;
+  object-src 'none';
+  base-uri 'self';
+  frame-ancestors 'none';">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mejorando Mi Tiempo</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="common.css">
+  <script defer src="verificarSesion.js"></script>
+</head>
+
+<body>
+  <!-- Barra de navegación -->
+  <nav class="barra-ondulada">
+    <div class="pestana-inicio" id="toggleMenu">
+      <img src="UhP.gif" alt="Inicio">
+    </div>
+
+    <div class="linea-ondulada">
+      <div class="luz-deslizante" id="light"></div>
+    </div>
+
+    <ul class="menu-links" id="menuLinks">
+      <li><a href="principal.html">Inicio</a></li>
+      <li><a href="raimnth.html">Gotas Infinitas</a></li>
+      <li><a href="comparson.html">ColorMatch</a></li>
+      <li><a href="memoria.html">Memoria Flash</a></li>
+      <li><a href="speed.html">Reflejo mental</a></li>
+      <li><a href="verbs.html">Verbos_inglés</a></li>
+    </ul>
+  </nav>
+
+  <div id="user-display" class="usuario-derecha"></div>
+
+  <section class="game-highlight">
+    <h2 class="section-title">MEJORA DESDE EL DIA UNO</h2>
+    <p class="section-subtitle">
+      ¡Diviértete con juegos asombrosos que desafían tu mente y tus habilidades!
+    </p>
+    <div class="section-buttons">
+      <a href="principal.html" class="btn">Sé un Competidor Global</a>
+      <a href="principal.html" class="btn btn-outline">¡Atrévete a Explorar tu potencial!</a>
+    </div>
+  </section>
+
+  <!-- BLOQUE 1: imagen izquierda, info derecha -->
+  <section class="game-section">
+    <div class="bg-block"></div>
+
+    <div class="game-image">
+      <img src="gotitas.png" alt="Juego 1">
+    </div>
+    <div class="game-info">
+      <nav class="game-nav">
+        <a href="raimnth.html" class="active">► Juega Ahora ◄</a>
+      </nav>
+      <h3>Juego Gotas Infinitas</h3>
+      <span class="tags">Resuelve Mentalmente</span>
+      <p class="description">
+        ¡Resuelve operaciones antes de que caigan! Mantente enfocado, rápido y preciso para sumar puntos y alcanzar
+        agilidad mental.
+      </p>
+      <a href="#" class="btn-sm toggle-info">VER MÁS INFORMACIÓN →</a>
+
+      <div class="extra-info hidden">
+        <p>Este juego entrena tus reflejos mentales y matemáticos con operaciones que debes resolver antes de que
+          lleguen al fondo.</p>
+        <ul>
+          <li>✔️ Operaciones aleatorias de suma, resta y multiplicación</li>
+          <li>✔️ Dificultad progresiva con el tiempo</li>
+          <li>✔️ Velocidad adaptativa en los primeros segundos</li>
+          <li>✔️ Ranking global visible al final</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOQUE 2: imagen derecha, info izquierda -->
+  <section class="game-section reverse">
+    <div class="bg-block"></div>
+
+    <div class="game-image">
+      <img src="colorss.png" alt="Juego 2">
+    </div>
+    <div class="game-info">
+      <nav class="game-nav">
+        <a href="comparson.html" class="active">► Juega Ahora ◄</a>
+      </nav>
+      <h3>ColorMatch</h3>
+      <span class="tags">Comparación De Colores</span>
+      <p class="description">
+        Compara el nombre en inglés con el color visual del texto. Usa las flechas del teclado:
+
+        → (Sí) si coinciden
+
+        ← (No) si no coinciden
+
+      </p>
+      <a href="#" class="btn-sm toggle-info">VER MÁS INFORMACIÓN →</a>
+
+      <div class="extra-info hidden">
+        <p>Este juego pone a prueba tu rapidez mental al decidir si el nombre del color coincide con el color del texto
+          mostrado.</p>
+        <ul>
+          <li>✔️ Concentración visual</li>
+          <li>✔️ Velocidad de reacción</li>
+          <li>✔️ Gana puntos por cada acierto</li>
+          <li>✔️ Multiplicador por rachas correctas</li>
+          <li>✔️ Ranking global en tiempo real</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- BLOQUE 3: imagen izquierda, info derecha -->
+  <section class="game-section">
+    <div class="bg-block"></div>
+
+    <div class="game-image">
+      <img src="memoria.png" alt="Juego 3">
+    </div>
+    <div class="game-info">
+      <nav class="game-nav">
+        <a href="memoria.html" class="active">► Juega Ahora ◄</a>
+      </nav>
+      <h3>Memoria Flash</h3>
+      <span class="tags">Fortaleciendo Mi Memoria</span>
+      <p class="description">
+        Poner a prueba y mejorar tu memoria visual a corto plazo, recordando y repitiendo secuencias de colores o luces
+        que se
+        iluminan dentro de una cuadrícula.
+      </p>
+      <a href="#" class="btn-sm toggle-info">VER MÁS INFORMACIÓN →</a>
+
+      <div class="extra-info hidden">
+        <p>Memoria Flash estimula tu atención y retención visual con desafíos dinámicos de patrones. Ideal para todas
+          las edades.</p>
+        <ul>
+          <li>✔️ Se muestra una secuencia de cartas que se iluminan brevemente en un orden específico.</li>
+          <li>✔️ El jugador debe repetir el patrón tocando o haciendo clic sobre las cartas en el mismo orden.</li>
+          <li>✔️ Aumenta la dificultad a medida que aciertas</li>
+          <li>✔️ Reinicio automático y ritmo progresivo</li>
+          <li>✔️ Tabla de puntuación para evaluar tu progreso</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- BLOQUE 4: imagen derecha, info izquierda -->
+  <section class="game-section reverse">
+    <div class="bg-block"></div>
+
+    <div class="game-image">
+      <img src="veloz.png" alt="Juego 4">
+    </div>
+    <div class="game-info">
+      <nav class="game-nav">
+        <a href="speed.html" class="active">► Juega Ahora ◄</a>
+      </nav>
+      <h3>Reflejo Mental</h3>
+      <span class="tags">Agilidad y Coordinación</span>
+      <p class="description">
+        Estimula la agilidad y percepción visual del jugador a través de la comparación rápida entre dos figuras,
+        promoviendo
+        una decisión rápida bajo presión.
+      </p>
+      <a href="#" class="btn-sm toggle-info">VER MÁS INFORMACIÓN →</a>
+
+      <div class="extra-info hidden">
+        <p>Un juego ideal para mejorar tu capacidad de reacción. Deberás decidir rápidamente si dos figuras coinciden o
+          no.</p>
+        <ul>
+          <li>✔️ Responde con teclas de dirección</li>
+          <li>✔️ Multiplicadores por rapidez</li>
+          <li>✔️ Estadísticas de desempeño</li>
+          <li>✔️ Competencia en tiempo real con otros jugadores</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Usuarios en línea (solo una vez) -->
+  <div id="usuarios-en-linea">Usuarios en línea: 0</div>
+
+  <!-- Scripts -->
+  <script type="module" src="userOnline.js"></script>
+  <script src="script.js"></script>
+  <script src="footer.js"></script>
+
+</body>
+
+</html>

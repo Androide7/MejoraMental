@@ -1,0 +1,524 @@
+/* ================== RESET & BASE ================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    background: #003f4a;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    padding-top: 100px; /* deja espacio para el menú */
+    background-image: none;
+    overflow-x: hidden;
+  
+    /* ✅ Centro contenido con flexbox, solo vertical */
+    padding-top: 100px; /* deja espacio para la barra fija */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+/* Estilo usuario en barra */
+.usuario-derecha {
+    position: absolute;
+    top: 4rem;
+    right: 4rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background: rgba(0,0,0,0.5);
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.5rem;
+    pointer-events: none;
+    animation: pulse 2s infinite;
+    z-index: 1000;
+  }
+  
+  @keyframes pulse {
+    0%   { transform: scale(1);   box-shadow: 0 0 0 rgba(255,255,255,0.7); }
+    50%  { transform: scale(1.05); box-shadow: 0 0 8px rgba(255,255,255,0.7); }
+    100% { transform: scale(1);   box-shadow: 0 0 0 rgba(255,255,255,0.7); }
+  }
+
+.game-container1 {
+  width: 90vw;
+  height: 90vw;
+    width: 700px;
+    height: 700px;
+    position: relative;
+    background-image: url('fnd7.webp');
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    overflow: hidden; /* Para que el pseudo-elemento no se salga del borde redondeado */
+}
+
+.game-container1::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgba(53, 53, 53, 0.5); /* Capa blanca semitransparente */
+    z-index: 0;
+    border-radius: 10px;
+}
+
+.game-container1 > * {
+    position: relative;
+    z-index: 1; /* Asegura que el contenido esté encima de la capa blanca */
+}
+
+
+/* Sección de introducción */
+.intro {
+  text-align: center;
+  margin-top: -90px; /* Sube todo el bloque de título, mensaje y botón */
+}
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+button {
+    background-color: #38b331;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #4f0099;
+}
+
+/* Sección de estadísticas */
+#stats {
+    display: none; /* Oculto al principio */
+    justify-content: space-between;
+    width: 100%;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+
+/* Tablero de juego */
+#gameBoard {
+    display: grid;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 690px; /* Para no sobrepasar el game-container */
+    max-height: 690px;
+}
+
+/* Fichas */
+.tile {
+    width: 60px;
+    height: 60px;
+    background-color: #6c3b3b;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: bold;
+}
+.tile {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tile:hover {
+  transform: scale(0.9); /* Zoom invertido */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+/* Colores para las fichas */
+.highlighted {
+    background-color: #4db6ac; /* Color resaltado */
+}
+
+.correct {
+    background-color: #4caf50; /* Verde con palomita */
+}
+
+.incorrect {
+    background-color: #f44336; /* Rojo con 'X' */
+}
+
+/* Mensaje de fin del juego */
+.end-message {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* ← Cambiado para alinear arriba */
+  align-items: center;
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  border-radius: 15px;
+  position: absolute;
+  top: 20%;
+  left: 0;
+  z-index: 9;
+  margin-top: -10px;
+}
+
+.end-message h2 {
+    font-size: 34px;
+    margin-bottom: 10px;
+}
+
+.end-message p {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.end-message button {
+    background-color: #17789b;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.end-message button:hover {
+    background-color: #0f9395;
+}
+
+/* Contenedor principal del top */
+#highscores-container {
+  position: relative;
+  font-size: 1.2rem;
+  top: -15%;
+  background: rgba(71, 45, 105, 0.7);
+  padding: 1rem;
+  border-radius: 9px;
+  width: 80vw;
+  height: auto;
+  max-width: 250px;
+  display: none;
+  z-index: 19;
+  text-align: center;
+  margin-top: 15px;
+  align-self: center;
+}
+
+
+/* Scroll solo si hay más de 4 ítems */
+/* Scroll solo si hay más de 4 ítems */
+.scroll-wrapper {
+  max-height: 140px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+  margin-top: 0.5rem;
+  border-radius: 4px;
+}
+
+.scroll-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+.scroll-wrapper::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 3px;
+}
+.scroll-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Lista de puntuaciones */
+#highScoresList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  font-size: 1.2rem; /* tamaño base */
+}
+
+#highScoresList li {
+  padding: 4px 0;
+  font-size: 1rem;
+  color: rgb(240, 240, 240);
+}
+
+/* 1º lugar */
+#highScoresList li.top-1 {
+  font-weight: bold;
+  background: gold;
+  color: black;
+  border-radius: 5px;
+  padding: 4px;
+  animation: crownPulse 1.5s infinite;
+  text-align: center;
+}
+#highScoresList li.top-1::before {
+  content: "👑 ";
+}
+
+/* 2º y 3º lugar */
+#highScoresList li.top-2 {
+  background: silver;
+  color: black;
+  padding: 3px;
+  border-radius: 4px;
+  text-align: center;
+}
+#highScoresList li.top-3 {
+  background: #cd7f32;
+  color: white;
+  padding: 3px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+/* 4º lugar */
+#highScoresList li.top-4 {
+  background: #4e8e55;
+  color: white;
+  padding: 3px;
+  border-radius: 4px;
+}
+
+/* Del 5º al 20º */
+#highScoresList li.secondary-highlight {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ddd;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+/* Resaltado del puntaje reciente */
+#highScoresList li.new-high {
+  background: #9e9e9eae;
+  border-radius: 4px;
+  font-weight: bold;
+  color: rgb(25, 25, 25);
+  padding: 4px;
+}
+
+/* Contorno dorado (top 1-3) */
+.highlight-user-position-gold {
+  border: 3px solid #5eff00;
+  border-radius: 10px;
+  padding: 4px;
+  box-shadow: 0 0 10px #55ff0080;
+}
+
+/* Contorno azul (top 4-20) */
+.highlight-user-position-blue {
+  border: 2px solid #4fc3f7;
+  border-radius: 10px;
+  padding: 4px;
+  box-shadow: 0 0 6px #4fc3f770;
+}
+
+/* Animación de corona */
+@keyframes crownPulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.15) rotate(-2deg); }
+  100% { transform: scale(1); }
+}
+
+/* ================== MENSAJE ESPECIAL ================== */
+
+#specialMessage {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #4caf50, #2e7d32);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  text-align: center;
+  border: 2px solid #ffffffbb;
+}
+
+#specialMessage.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-10px);
+  pointer-events: auto;
+}
+/* ========== HIDDEN UNIVERSAL ========== */
+.hidden {
+  display: none;
+}
+
+/* ========== RESPONSIVE PARA DISPOSITIVOS PEQUEÑOS (<= 768px) ========== */
+@media screen and (max-width: 768px) {
+  body {
+    padding-top: 60px;                     /* Espacio para la pestaña superior */
+    margin: 0;
+    height: 100vh;
+    overflow: auto;
+  }
+
+  .game-container1 {
+    width: 90vw;
+    min-height: calc(100vh - 60px - 20px); /* Resta el espacio de arriba y abajo */
+    margin: 0 auto 20px auto;              /* Margen inferior para separación visual */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;               /* Centra contenido verticalmente */
+    align-items: center;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+
+  p {
+    font-size: 16px;
+  }
+
+  button {
+    font-size: 16px;
+    padding: 8px 16px;
+  }
+
+  .tile {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+
+  .end-message h2 {
+    font-size: 28px;
+  }
+
+  .end-message p {
+    font-size: 18px;
+  }
+
+  .end-message button {
+    font-size: 18px;
+    padding: 10px 20px;
+  }
+
+  #highscores-container {
+    width: 90%;
+    max-width: 220px;
+    padding: 12px;
+    font-size: 0.95rem;
+    height: auto;
+  }
+
+  .scroll-wrapper {
+    max-height: 140px;
+  }
+
+  #highScoresList li {
+    font-size: 0.95rem;
+  }
+
+  #specialMessage {
+    font-size: 18px;
+    padding: 10px 20px;
+  }
+
+  .usuario-derecha {
+    font-size: 0.9rem;
+    top: 3rem;
+    right: 2rem;
+  }
+}
+#usuarios-en-linea {
+  display: none;
+}
+
+#multiplier-display {
+  pointer-events: none;
+  text-shadow: 2px 2px 4px #000;
+}
+
+/* 🎯 Animación básica */
+.point-animation {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #4caf50;
+  animation: popUpFade 1s ease-out forwards;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* 🔥 Efecto extra si hay multiplicador activo */
+.point-animation.streak {
+  color: #ffd700; /* dorado */
+  text-shadow: 0 0 6px #ff9800;
+  font-size: 2rem;
+}
+
+@keyframes popUpFade {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -80%) scale(1.3);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -120%) scale(0.8);
+  }
+}
+
+.multiplier-fly {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #00ffcc;
+  animation: flyUpFade 1s ease-out forwards;
+  pointer-events: none;
+  z-index: 100;
+}
+
+@keyframes flyUpFade {
+  0% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    scale: 1;
+  }
+  50% {
+    scale: 1.3;
+  }
+  100% {
+    transform: translateX(-50%) translateY(-40px);
+    opacity: 0;
+    scale: 0.8;
+  }
+}

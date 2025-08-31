@@ -1,0 +1,13 @@
+body {
+    margin: 0;
+    background: #1e0037;
+    overflow: hidden;
+  }
+  
+  #bgCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1; /* siempre detrás de todo */
+  }
+  

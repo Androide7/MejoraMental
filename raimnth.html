@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Referrer-Policy" content="no-referrer">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=()">
+  <meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com;
+  connect-src 'self' https://*.firebaseio.com wss://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  img-src 'self' data: https://firebasestorage.googleapis.com;
+  font-src 'self' https://fonts.gstatic.com;
+  frame-ancestors 'none';
+  base-uri 'self';
+  object-src 'none';">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juego de Matemáticas</title>
+  <link rel="stylesheet" href="styles1.css">
+  <link rel="stylesheet" href="commonn.css">
+  <script defer src="verificarSesion.js"></script>
+</head>
+
+<body>
+  <!-- Barra de navegación -->
+  <nav class="barra-ondulada">
+    <div class="pestana-inicio" id="toggleMenu">
+      <img src="UhP.gif" alt="Inicio">
+    </div>
+
+    <div class="linea-ondulada">
+      <div class="luz-deslizante" id="light"></div>
+    </div>
+
+    <ul class="menu-links" id="menuLinks">
+      <li><a href="principal.html">Inicio</a></li>
+      <li><a href="raimnth.html">Gotas Infinitas</a></li>
+      <li><a href="comparson.html">ColorMatch</a></li>
+      <li><a href="memoria.html">Memoria Flash</a></li>
+      <li><a href="speed.html">Reflejo mental</a></li>
+      <li><a href="verbs.html">Verbos_inglés</a></li>
+    </ul>
+  </nav>
+
+  <div id="user-display" class="usuario-derecha"></div>
+  </nav>
+
+  <div id="gameContainer" class="game-container">
+    <!-- Canvas de fondo -->
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- Canvas principal del juego -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Mensaje de inicio -->
+    <div id="startMessage" class="start-message">
+        <h1>Juego mental de matemáticas</h1>
+    </div>
+
+    <!-- Botón de inicio -->
+    <button id="startButton" class="start-btn">Iniciar</button>
+
+    <!-- Caja de respuesta -->
+    <input type="text" id="answerInput" class="answer-box" placeholder="Tu respuesta" autocomplete="off"
+        autocorrect="off" autocapitalize="off" spellcheck="false" />
+
+    <!-- Contenedor final del mensaje del juego -->
+    <div id="endMessage" class="end-message">
+        <p id="finalMessage"></p>
+
+        <!-- Contenedor del top -->
+        <div id="highScoresContainer">
+            <h4>🏆 Top Puntuaciones</h4>
+            <div class="scroll-wrapper">
+                <ul id="highScoresList"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Mensaje especial debe ir AQUÍ, fuera del top -->
+    <div id="specialMessage" class="hidden special-message"></div>
+    <!-- Usuarios en línea (sin usar) -->
+    <div id="usuarios-en-linea">Usuarios en línea: 0</div>
+
+    <!-- Módulos -->
+    <script type="module" src="userOnline.js"></script>
+    <script type="module" src="rainmth.js"></script>
+    <script src="script.js"></script>
+    <!-- Script del fondo dinámico -->
+    <script src="fondom.js"></script>
+</body>
+
+</html>

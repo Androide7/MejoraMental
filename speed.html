@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Referrer-Policy" content="no-referrer">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=()">
+  <meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com;
+  connect-src 'self' https://*.firebaseio.com wss://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  img-src 'self' data: https://firebasestorage.googleapis.com;
+  font-src 'self' https://fonts.gstatic.com;
+  frame-ancestors 'none';
+  base-uri 'self';
+  object-src 'none';">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reflejo Mental</title>
+  <link rel="stylesheet" href="styles4.css">
+  <link rel="stylesheet" href="commonn.css">
+  <script defer src="verificarSesion.js"></script>
+</head>
+
+<body>
+  <!-- Barra de navegación -->
+  <nav class="barra-ondulada">
+    <div class="pestana-inicio" id="toggleMenu">
+      <img src="UhP.gif" alt="Inicio">
+    </div>
+
+    <div class="linea-ondulada">
+      <div class="luz-deslizante" id="light"></div>
+    </div>
+
+    <ul class="menu-links" id="menuLinks">
+      <li><a href="principal.html">Inicio</a></li>
+      <li><a href="raimnth.html">Gotas Infinitas</a></li>
+      <li><a href="comparson.html">ColorMatch</a></li>
+      <li><a href="memoria.html">Memoria Flash</a></li>
+      <li><a href="speed.html">Reflejo mental</a></li>
+      <li><a href="verbs.html">Verbos_inglés</a></li>
+    </ul>
+  </nav>
+
+  <div id="user-display" class="usuario-derecha"></div>
+  </nav>
+  <!-- Pantalla de inicio -->
+  <div id="start-screen">
+    <h1>Juego de Figuras</h1>
+    <h3>Responde "sí" o "no" según la figura sean igual o No.</h3>
+    <button id="start-btn">Iniciar Juego</button>
+  </div>
+
+  <!-- Contenedor del juego (fondo de 700x700, imagen incluida en CSS) -->
+  <div id="game-container" style="display:none;">
+    <!-- Contenedores para la figura de referencia y candidata (cuadros grises claros) -->
+    <div id="prev-shape" class="shape-box"></div>
+    <div id="curr-shape" class="shape-box"></div>
+
+    <!-- Información: timer y puntuación -->
+    <div id="game-info">
+      <div id="timer">45</div>
+      <div id="score">Puntos: 0</div>
+    </div>
+    <div id="arrow-question">¿Son figuras iguales?</div>
+    <!-- Contenedor de flechas en la parte inferior -->
+    <!-- Contenedor de flechas en la parte inferior -->
+    <div id="arrow-container">
+      <!-- Flecha izquierda con texto "no" -->
+      <div class="arrow-box">
+        <span class="label no-label">No</span>
+        <div class="arrow" id="arrow-left">
+          <svg width="50" height="50" viewBox="0 0 24 24">
+            <polygon points="15,4 7,12 15,20" fill="#333" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Flecha derecha con texto "sí" -->
+      <div class="arrow-box">
+        <div class="arrow" id="arrow-right">
+          <svg width="50" height="50" viewBox="0 0 24 24">
+            <polygon points="9,4 17,12 9,20" fill="#333" />
+          </svg>
+        </div>
+        <span class="label yes-label">Sí</span>
+      </div>
+    </div> <!-- ✅ Este es el cierre correcto de #arrow-container -->
+
+
+    <!-- Pantalla de fin de juego -->
+    <div id="game-over">
+      <h2>¡Tiempo Terminado!</h2>
+      <p id="final-score"></p>
+      <button id="restart-btn">Reiniciar Juego</button>
+
+      <!-- Mensaje especial si entra al top -->
+      <div id="specialMessage" class="top-message hidden"></div>
+
+      <!-- Contenedor de puntuaciones -->
+      <div id="highscores-container" class="hidden">
+        <h4>🏆 Top 100 Puntuaciones</h4>
+        <div class="scroll-wrapper">
+          <ul id="highScoresList"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Usuarios en línea (sin usar) -->
+  <div id="usuarios-en-linea">Usuarios en línea: 0</div>
+
+  <!-- Módulos -->
+  <script type="module" src="userOnline.js"></script>
+  <script type="module" src="speed.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Referrer-Policy" content="no-referrer">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=()">
+  <meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com;
+  connect-src 'self' https://*.firebaseio.com wss://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  img-src 'self' data: https://firebasestorage.googleapis.com;
+  font-src 'self' https://fonts.gstatic.com;
+  frame-ancestors 'none';
+  base-uri 'self';
+  object-src 'none';">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verbos en Inglés</title>
+  <link rel="stylesheet" href="verbos/styles.css">
+  <link rel="stylesheet" href="commonn.css">
+  <script type="module" src="verbos/verbs.js"></script>
+  <script defer src="verificarSesion.js"></script>
+</head>
+
+<body>
+  <!-- Barra de navegación -->
+  <nav class="barra-ondulada">
+    <div class="pestana-inicio" id="toggleMenu">
+      <img src="UhP.gif" alt="Inicio">
+    </div>
+
+    <div class="linea-ondulada">
+      <div class="luz-deslizante" id="light"></div>
+    </div>
+
+    <ul class="menu-links" id="menuLinks">
+      <li><a href="principal.html">Inicio</a></li>
+      <li><a href="raimnth.html">Gotas Infinitas</a></li>
+      <li><a href="comparson.html">ColorMatch</a></li>
+      <li><a href="memoria.html">Memoria Flash</a></li>
+      <li><a href="speed.html">Reflejo mental</a></li>
+      <li><a href="verbs.html">Verbos_inglés</a></li>
+    </ul>
+  </nav>
+
+  <div id="user-display" class="usuario-derecha"></div>
+  <div class="container">
+    <!-- Pantalla de inicio -->
+    <div id="start-screen" class="screen">
+      <h1>Verbos en Inglés</h1>
+      <p>Pon a prueba tu vocabulario: traduce el verbo que aparece en pantalla.</p>
+      <button id="start-btn" class="btn particle-btn"><span>Iniciar</span></button>
+    </div>
+
+    <!-- Pantalla de juego -->
+    <div id="game-screen" class="screen hidden">
+      <div class="hud">
+        <div>Puntuación: <span id="score">0</span></div>
+        <div>Incorrectas: <span id="wrong">0</span></div>
+        <div>Tiempo: <span id="timer">45</span>s</div>
+      </div>
+      <div id="card">
+        <img id="card-img" src="" alt="Verbo" />
+        <h2 id="card-word"></h2>
+        <div id="options"></div>
+      </div>
+    </div>
+    <div id="streak-bonus" class="hidden"></div>
+
+    <!-- Pantalla de fin -->
+    <div id="end-screen" class="screen hidden">
+      <h1>¡Tiempo!</h1>
+      <p class="description">Puedes mejorar esforzándote</p> <!-- SOLO ESTE lleva la clase .description -->
+      <div class="results">
+        <p>Puntuación final: <span id="final-score"></span></p>
+        <p>Respuestas incorrectas: <span id="final-wrong"></span></p>
+      </div>
+      <button id="restart-btn" class="btn particle-btn"><span>Reiniciar</span></button>
+    </div>
+    <!-- Contenedor principal de puntuaciones -->
+    <div id="highscores-container" class="hidden">
+      <!-- Título del ranking -->
+      <h4>🏆 Top 100 Puntuaciones</h4>
+      <!-- Lista con scroll si hay muchas puntuaciones -->
+      <div class="scroll-wrapper">
+        <ul id="highScoresList"></ul>
+      </div>
+    </div>
+    <!-- Mensaje especial si entra al top -->
+    <div id="specialMessage" class="top-message hidden"></div>
+  <!-- Usuarios en línea (sin usar) -->
+  <div id="usuarios-en-linea">Usuarios en línea: 0</div>
+
+    <!-- Módulos -->
+    <script type="module" src="userOnline.js"></script>
+    <script src="script.js"></script>
+
+</body>
+
+</html>
