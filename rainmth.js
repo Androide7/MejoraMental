@@ -251,14 +251,16 @@ import { renderHighScores } from './renderHighScores.js';
 const updateDrops = () => {
   if (isFrozen || !gameRunning) return;
 
-  const scale = canvasScale; 
-  const adjustedSpeed = speed * scale; // 👈 velocidad proporcional al tamaño del canvas
+  // ⏱️ Velocidad basada en el tamaño relativo del canvas
+  // La idea es que la gota tarde lo mismo en recorrer el alto del canvas
+  const baseCanvasHeight = 700; // referencia (tu tamaño estándar)
+  const normalizedSpeed = speed * (canvas.height / baseCanvasHeight);
 
   raindrops = raindrops.filter(drop => {
-    drop.y += adjustedSpeed; // ✅ ya no será tan rápido en pantallas pequeñas
+    drop.y += normalizedSpeed; // ✅ movimiento proporcional al alto del canvas
 
-    // Si la gota llega al fondo del canvas
-    if (drop.y > gameCanvas.height - DROP_RADIUS * scale) {
+    // Si la gota llega al fondo
+    if (drop.y > canvas.height - DROP_RADIUS * canvasScale) {
       if (!inTimeTrial) {
         missed++;
         totalWrong++;
@@ -275,9 +277,10 @@ const updateDrops = () => {
       return false; // eliminar gota
     }
 
-    return true; // sigue en pantalla
+    return true;
   });
 };
+
 
 
     // ——————————————————————————————————————————————
@@ -331,19 +334,23 @@ const updateDrops = () => {
     // 12) Dibujar todas las gotas + HUD + animaciones de racha
     // ——————————————————————————————————————————————
 // 🌟 Variables globales
+const bgCanvas = document.getElementById('bgCanvas');
 const gameCanvas = document.getElementById('gameCanvas');
-
 let canvasScale = 1; // Escala relativa al tamaño base 700
 
 // 📐 Ajustar canvas al tamaño del contenedor
-function resizeCanvas() {
+function resizeCanvases() {
   const container = document.getElementById('gameContainer');
   if (!container) return;
 
   const width = container.clientWidth;
   const height = container.clientHeight;
 
-  // Solo juego
+  // Fondo
+  bgCanvas.width = width;
+  bgCanvas.height = height;
+
+  // Juego
   gameCanvas.width = width;
   gameCanvas.height = height;
 
@@ -352,15 +359,15 @@ function resizeCanvas() {
 }
 
 // Ajustar al cargar y al cambiar tamaño de ventana
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+window.addEventListener('resize', resizeCanvases);
+resizeCanvases();
 
 // 🌧️ Función drawDrops escalada
 const drawDrops = () => {
-  const scale = canvasScale; // Escala calculada en resizeCanvas
+  const scale = canvasScale; // Escala calculada en resizeCanvases
 
   // 🧹 Limpiar canvas
-  ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+  ctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
 
   // 💧 Dibujar cada gota (ya escala en drawDrop)
   raindrops.forEach(drawDrop);
@@ -392,7 +399,7 @@ const drawDrops = () => {
     ctx.font = `${34 * scale}px 'Comic Sans MS'`;
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
-    ctx.fillText(`Tiempo: ${remainingS}s`, gameCanvas.width / 2, 20 * scale);
+    ctx.fillText(`Tiempo: ${remainingS}s`, bgCanvas.width / 2, 20 * scale);
     ctx.restore();
   }
 
@@ -418,7 +425,6 @@ const drawDrops = () => {
   });
   toRemove.reverse().forEach(i => streakAnimations.splice(i, 1));
 };
-
 
 
 
@@ -619,7 +625,7 @@ const drawDrops = () => {
     const gameLoop = ts => {
       if (!gameRunning) {
         // 🧹 Borra todo el canvas para que no queden gotas visibles
-        ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         return; // ⬅️ Detener el bucle hasta reiniciar
       }
     
@@ -627,12 +633,12 @@ const drawDrops = () => {
     
       // 1) Mostrar mensaje “¡CONTRARRELOJ!” antes de iniciar
       if (timeTrialPending) {
-        drawDrops(); // Dibuja gotas actuales
+        drawDrops(); // Dibuja fondo y gotas actuales
         ctx.save();
         ctx.fillStyle = "purple";
         ctx.font = "48px 'Comic Sans MS'";
         ctx.textAlign = "center";
-        ctx.fillText("¡CONTRARRELOJ!", gameCanvas.width / 2, gameCanvas.height / 2);
+        ctx.fillText("¡CONTRARRELOJ!", canvas.width / 2, canvas.height / 2);
         ctx.restore();
     
         // Después de 1 segundo, comienza el contrarreloj
@@ -646,7 +652,7 @@ const drawDrops = () => {
           missed = 0;
     
           // ✅ Agregar clase visual al canvas
-          gameCanvas.classList.add('time-trial-mode');
+          canvas.classList.add('time-trial-mode');
     
           // Aumentar velocidad
           speed *= 1.6;
@@ -662,7 +668,7 @@ const drawDrops = () => {
     
         // Mostrar advertencia en los últimos 3 segundos
         if (ttElapsed >= TIME_TRIAL_DURATION - 3000) {
-          gameCanvas.classList.add('time-trial-warning');
+          canvas.classList.add('time-trial-warning');
         }
     
         // Termina el contrarreloj
@@ -670,7 +676,7 @@ const drawDrops = () => {
           inTimeTrial = false;
     
           // ✅ Quitar clases visuales
-          gameCanvas.classList.remove('time-trial-mode', 'time-trial-warning');
+          canvas.classList.remove('time-trial-mode', 'time-trial-warning');
     
           speed /= 1.5;
           missed = 0;
@@ -722,34 +728,36 @@ const drawDrops = () => {
         window.currentStyleIndex = (window.currentStyleIndex + 1) % styles.length;
         window.lastStyleChange = now;
     
-        gameCanvas.classList.remove(...styles);
+        canvas.classList.remove(...styles);
         const currentStyle = styles[window.currentStyleIndex];
-        gameCanvas.classList.add(currentStyle);
+        canvas.classList.add(currentStyle);
       }
     
       requestAnimationFrame(gameLoop);
     };
-    
+
     // 📌 Función para mostrar el conteo regresivo
     function playCountdown(callback) {
+      // Ocultar y desactivar el botón mientras dura el conteo
       if (startButton) {
         startButton.style.display = 'none';
         startButton.disabled = true;
       }
-    
+
       const overlay = document.createElement('div');
       overlay.id = 'countdownOverlay';
-      gameCanvas.parentElement.appendChild(overlay);
-    
+      canvas.parentElement.appendChild(overlay);
+
       let count = 3;
       overlay.textContent = count;
-    
+
       const interval = setInterval(() => {
         count--;
         if (count > 0) {
           overlay.textContent = count;
         } else if (count === 0) {
           overlay.textContent = '¡GO!';
+          // Mostrar "GO!" un momento antes de iniciar
           setTimeout(() => {
             clearInterval(interval);
             overlay.remove();
@@ -758,79 +766,85 @@ const drawDrops = () => {
         }
       }, 1000);
     }
-    
+
     // ——————————————————————————————————————————————
     // 19) Iniciar partida
     // ——————————————————————————————————————————————
-    function startGameReal() {
-      if (gameRunning) return;
-      if (hsContainer) hsContainer.style.display = 'none';
-      startMessage?.remove();
-    
-      // — Inicialización de variables del juego
-      raindrops = [];
-      speed = 1.5;
-      score = 0;
-      missed = 0;
-      totalWrong = 0;
-      maxDrops = 3;
-      streak = 0;
-      hitTimes = [];
-      missTimes = [];
-      lastAdaptiveCheck = performance.now();
-      streakAnimations.length = 0;
-    
-      gameStartTime = performance.now();
-      gameRunning = true;
-    
-      answerInput.style.display = 'inline-block';
-      adaptiveStart = performance.now();
-      adaptiveEnd = adaptiveStart + 60000;
-      adaptiveEnabled = true;
-    
-      gameCanvas.classList.remove('warning');
-      endMessageDiv.style.display = 'none';
-    
-      dropInterval = BASE_INTERVAL / speed;
-      lastTime = performance.now();
-      answerInput.focus();
-    
-      requestAnimationFrame(gameLoop);
+
+function startGameReal() {
+  if (gameRunning) return;
+  if (hsContainer) hsContainer.style.display = 'none';
+  startMessage?.remove();
+
+  // — Inicialización de variables del juego
+  raindrops = [];
+  speed = 1.5;
+  score = 0;
+  missed = 0;
+  totalWrong = 0;
+  maxDrops = 3;
+  streak = 0;
+  hitTimes = [];
+  missTimes = [];
+  lastAdaptiveCheck = performance.now();
+  streakAnimations.length = 0;
+
+  gameStartTime = performance.now();
+  gameRunning = true;
+
+  answerInput.style.display = 'inline-block';
+  adaptiveStart = performance.now();
+  adaptiveEnd = adaptiveStart + 60000;
+  adaptiveEnabled = true;
+
+  canvas.classList.remove('warning');
+  endMessageDiv.style.display = 'none';
+
+  dropInterval = BASE_INTERVAL / speed;
+  lastTime = performance.now();
+  answerInput.focus();
+
+  // — Iniciar fondo dinámico
+  window.bgAnimation.start();
+
+  requestAnimationFrame(gameLoop);
+}
+
+// Iniciar con conteo regresivo
+function startGame() {
+  playCountdown(startGameReal);
+}
+
+// ——————————————————————————————————————————————
+// 20) Finalizar partida
+// ——————————————————————————————————————————————
+const endGame = async () => {
+  gameRunning = false;
+  raindrops = []; // limpieza inmediata
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height); // borra canvas principal
+
+  answerInput.style.display = 'none';
+  finalMessage.innerHTML = `
+    <p class="final-msg">¡Perdiste! Puntuación final: ${score}</p>
+    <p class="final-msg">Incorrectas: <strong>${totalWrong}</strong></p>
+    <p class="final-msg special">¡Puedes Superarlo!</p>
+  `;
+  endMessageDiv.style.display = 'block';
+
+  // — Detener fondo dinámico
+  window.bgAnimation.stop();
+
+  await renderHighScores(score);
+
+  setTimeout(() => {
+    if (endMessageDiv.style.display === 'block') {
+      startButton.textContent = 'Reiniciar';
+      startButton.style.display = 'block';
+      startButton.disabled = false;
     }
-    
-    // Iniciar con conteo regresivo
-    function startGame() {
-      playCountdown(startGameReal);
-    }
-    
-    // ——————————————————————————————————————————————
-    // 20) Finalizar partida
-    // ——————————————————————————————————————————————
-    const endGame = async () => {
-      gameRunning = false;
-      raindrops = [];
-    
-      ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
-    
-      answerInput.style.display = 'none';
-      finalMessage.innerHTML = `
-        <p class="final-msg">¡Perdiste! Puntuación final: ${score}</p>
-        <p class="final-msg">Incorrectas: <strong>${totalWrong}</strong></p>
-        <p class="final-msg special">¡Puedes Superarlo!</p>
-      `;
-      endMessageDiv.style.display = 'block';
-    
-      await renderHighScores(score);
-    
-      setTimeout(() => {
-        if (endMessageDiv.style.display === 'block') {
-          startButton.textContent = 'Reiniciar';
-          startButton.style.display = 'block';
-          startButton.disabled = false;
-        }
-      }, 3000);
-    };
-    
+  }, 3000);
+};
 
     // ——————————————————————————————————————————————
     // 21) Eventos sobre input y botón
