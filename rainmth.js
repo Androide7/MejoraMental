@@ -258,7 +258,7 @@ const updateDrops = () => {
     drop.y += adjustedSpeed; // ✅ ya no será tan rápido en pantallas pequeñas
 
     // Si la gota llega al fondo del canvas
-    if (drop.y > canvas.height - DROP_RADIUS * scale) {
+    if (drop.y > gameCanvas.height - DROP_RADIUS * scale) {
       if (!inTimeTrial) {
         missed++;
         totalWrong++;
@@ -331,23 +331,19 @@ const updateDrops = () => {
     // 12) Dibujar todas las gotas + HUD + animaciones de racha
     // ——————————————————————————————————————————————
 // 🌟 Variables globales
-const bgCanvas = document.getElementById('bgCanvas');
 const gameCanvas = document.getElementById('gameCanvas');
+
 let canvasScale = 1; // Escala relativa al tamaño base 700
 
 // 📐 Ajustar canvas al tamaño del contenedor
-function resizeCanvases() {
+function resizeCanvas() {
   const container = document.getElementById('gameContainer');
   if (!container) return;
 
   const width = container.clientWidth;
   const height = container.clientHeight;
 
-  // Fondo
-  bgCanvas.width = width;
-  bgCanvas.height = height;
-
-  // Juego
+  // Solo juego
   gameCanvas.width = width;
   gameCanvas.height = height;
 
@@ -356,15 +352,15 @@ function resizeCanvases() {
 }
 
 // Ajustar al cargar y al cambiar tamaño de ventana
-window.addEventListener('resize', resizeCanvases);
-resizeCanvases();
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
 
 // 🌧️ Función drawDrops escalada
 const drawDrops = () => {
-  const scale = canvasScale; // Escala calculada en resizeCanvases
+  const scale = canvasScale; // Escala calculada en resizeCanvas
 
   // 🧹 Limpiar canvas
-  ctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+  ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
 
   // 💧 Dibujar cada gota (ya escala en drawDrop)
   raindrops.forEach(drawDrop);
@@ -396,7 +392,7 @@ const drawDrops = () => {
     ctx.font = `${34 * scale}px 'Comic Sans MS'`;
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
-    ctx.fillText(`Tiempo: ${remainingS}s`, bgCanvas.width / 2, 20 * scale);
+    ctx.fillText(`Tiempo: ${remainingS}s`, gameCanvas.width / 2, 20 * scale);
     ctx.restore();
   }
 
@@ -422,6 +418,7 @@ const drawDrops = () => {
   });
   toRemove.reverse().forEach(i => streakAnimations.splice(i, 1));
 };
+
 
 
 
@@ -622,7 +619,7 @@ const drawDrops = () => {
     const gameLoop = ts => {
       if (!gameRunning) {
         // 🧹 Borra todo el canvas para que no queden gotas visibles
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
         return; // ⬅️ Detener el bucle hasta reiniciar
       }
     
@@ -630,12 +627,12 @@ const drawDrops = () => {
     
       // 1) Mostrar mensaje “¡CONTRARRELOJ!” antes de iniciar
       if (timeTrialPending) {
-        drawDrops(); // Dibuja fondo y gotas actuales
+        drawDrops(); // Dibuja gotas actuales
         ctx.save();
         ctx.fillStyle = "purple";
         ctx.font = "48px 'Comic Sans MS'";
         ctx.textAlign = "center";
-        ctx.fillText("¡CONTRARRELOJ!", canvas.width / 2, canvas.height / 2);
+        ctx.fillText("¡CONTRARRELOJ!", gameCanvas.width / 2, gameCanvas.height / 2);
         ctx.restore();
     
         // Después de 1 segundo, comienza el contrarreloj
@@ -649,7 +646,7 @@ const drawDrops = () => {
           missed = 0;
     
           // ✅ Agregar clase visual al canvas
-          canvas.classList.add('time-trial-mode');
+          gameCanvas.classList.add('time-trial-mode');
     
           // Aumentar velocidad
           speed *= 1.6;
@@ -665,7 +662,7 @@ const drawDrops = () => {
     
         // Mostrar advertencia en los últimos 3 segundos
         if (ttElapsed >= TIME_TRIAL_DURATION - 3000) {
-          canvas.classList.add('time-trial-warning');
+          gameCanvas.classList.add('time-trial-warning');
         }
     
         // Termina el contrarreloj
@@ -673,7 +670,7 @@ const drawDrops = () => {
           inTimeTrial = false;
     
           // ✅ Quitar clases visuales
-          canvas.classList.remove('time-trial-mode', 'time-trial-warning');
+          gameCanvas.classList.remove('time-trial-mode', 'time-trial-warning');
     
           speed /= 1.5;
           missed = 0;
@@ -725,36 +722,34 @@ const drawDrops = () => {
         window.currentStyleIndex = (window.currentStyleIndex + 1) % styles.length;
         window.lastStyleChange = now;
     
-        canvas.classList.remove(...styles);
+        gameCanvas.classList.remove(...styles);
         const currentStyle = styles[window.currentStyleIndex];
-        canvas.classList.add(currentStyle);
+        gameCanvas.classList.add(currentStyle);
       }
     
       requestAnimationFrame(gameLoop);
     };
-
+    
     // 📌 Función para mostrar el conteo regresivo
     function playCountdown(callback) {
-      // Ocultar y desactivar el botón mientras dura el conteo
       if (startButton) {
         startButton.style.display = 'none';
         startButton.disabled = true;
       }
-
+    
       const overlay = document.createElement('div');
       overlay.id = 'countdownOverlay';
-      canvas.parentElement.appendChild(overlay);
-
+      gameCanvas.parentElement.appendChild(overlay);
+    
       let count = 3;
       overlay.textContent = count;
-
+    
       const interval = setInterval(() => {
         count--;
         if (count > 0) {
           overlay.textContent = count;
         } else if (count === 0) {
           overlay.textContent = '¡GO!';
-          // Mostrar "GO!" un momento antes de iniciar
           setTimeout(() => {
             clearInterval(interval);
             overlay.remove();
@@ -763,85 +758,79 @@ const drawDrops = () => {
         }
       }, 1000);
     }
-
+    
     // ——————————————————————————————————————————————
     // 19) Iniciar partida
     // ——————————————————————————————————————————————
-
-function startGameReal() {
-  if (gameRunning) return;
-  if (hsContainer) hsContainer.style.display = 'none';
-  startMessage?.remove();
-
-  // — Inicialización de variables del juego
-  raindrops = [];
-  speed = 1.5;
-  score = 0;
-  missed = 0;
-  totalWrong = 0;
-  maxDrops = 3;
-  streak = 0;
-  hitTimes = [];
-  missTimes = [];
-  lastAdaptiveCheck = performance.now();
-  streakAnimations.length = 0;
-
-  gameStartTime = performance.now();
-  gameRunning = true;
-
-  answerInput.style.display = 'inline-block';
-  adaptiveStart = performance.now();
-  adaptiveEnd = adaptiveStart + 60000;
-  adaptiveEnabled = true;
-
-  canvas.classList.remove('warning');
-  endMessageDiv.style.display = 'none';
-
-  dropInterval = BASE_INTERVAL / speed;
-  lastTime = performance.now();
-  answerInput.focus();
-
-  // — Iniciar fondo dinámico
-  window.bgAnimation.start();
-
-  requestAnimationFrame(gameLoop);
-}
-
-// Iniciar con conteo regresivo
-function startGame() {
-  playCountdown(startGameReal);
-}
-
-// ——————————————————————————————————————————————
-// 20) Finalizar partida
-// ——————————————————————————————————————————————
-const endGame = async () => {
-  gameRunning = false;
-  raindrops = []; // limpieza inmediata
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // borra canvas principal
-
-  answerInput.style.display = 'none';
-  finalMessage.innerHTML = `
-    <p class="final-msg">¡Perdiste! Puntuación final: ${score}</p>
-    <p class="final-msg">Incorrectas: <strong>${totalWrong}</strong></p>
-    <p class="final-msg special">¡Puedes Superarlo!</p>
-  `;
-  endMessageDiv.style.display = 'block';
-
-  // — Detener fondo dinámico
-  window.bgAnimation.stop();
-
-  await renderHighScores(score);
-
-  setTimeout(() => {
-    if (endMessageDiv.style.display === 'block') {
-      startButton.textContent = 'Reiniciar';
-      startButton.style.display = 'block';
-      startButton.disabled = false;
+    function startGameReal() {
+      if (gameRunning) return;
+      if (hsContainer) hsContainer.style.display = 'none';
+      startMessage?.remove();
+    
+      // — Inicialización de variables del juego
+      raindrops = [];
+      speed = 1.5;
+      score = 0;
+      missed = 0;
+      totalWrong = 0;
+      maxDrops = 3;
+      streak = 0;
+      hitTimes = [];
+      missTimes = [];
+      lastAdaptiveCheck = performance.now();
+      streakAnimations.length = 0;
+    
+      gameStartTime = performance.now();
+      gameRunning = true;
+    
+      answerInput.style.display = 'inline-block';
+      adaptiveStart = performance.now();
+      adaptiveEnd = adaptiveStart + 60000;
+      adaptiveEnabled = true;
+    
+      gameCanvas.classList.remove('warning');
+      endMessageDiv.style.display = 'none';
+    
+      dropInterval = BASE_INTERVAL / speed;
+      lastTime = performance.now();
+      answerInput.focus();
+    
+      requestAnimationFrame(gameLoop);
     }
-  }, 3000);
-};
+    
+    // Iniciar con conteo regresivo
+    function startGame() {
+      playCountdown(startGameReal);
+    }
+    
+    // ——————————————————————————————————————————————
+    // 20) Finalizar partida
+    // ——————————————————————————————————————————————
+    const endGame = async () => {
+      gameRunning = false;
+      raindrops = [];
+    
+      ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+    
+      answerInput.style.display = 'none';
+      finalMessage.innerHTML = `
+        <p class="final-msg">¡Perdiste! Puntuación final: ${score}</p>
+        <p class="final-msg">Incorrectas: <strong>${totalWrong}</strong></p>
+        <p class="final-msg special">¡Puedes Superarlo!</p>
+      `;
+      endMessageDiv.style.display = 'block';
+    
+      await renderHighScores(score);
+    
+      setTimeout(() => {
+        if (endMessageDiv.style.display === 'block') {
+          startButton.textContent = 'Reiniciar';
+          startButton.style.display = 'block';
+          startButton.disabled = false;
+        }
+      }, 3000);
+    };
+    
 
     // ——————————————————————————————————————————————
     // 21) Eventos sobre input y botón
