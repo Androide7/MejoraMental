@@ -18,22 +18,31 @@ const colors = [
   '#668cff', '#809fff', '#99b3ff'  // azules
 ];
 
+// ✅ Ajustar tamaño con máximo 700x700
 function resizeCanvases() {
   const container = document.getElementById('gameContainer');
   if (!container) return;
 
-  const width = container.clientWidth;
-  const height = container.clientHeight;
+  // Limitar a 700px máximo
+  const width = Math.min(container.clientWidth, 700);
+  const height = Math.min(container.clientHeight, 700);
 
   // Fondo
   const bgCanvas = document.getElementById('bgCanvas');
-  bgCanvas.width = width;
-  bgCanvas.height = height;
+  if (bgCanvas) {
+    bgCanvas.width = width;
+    bgCanvas.height = height;
+  }
 
   // Juego
   const gameCanvas = document.getElementById('gameCanvas');
-  gameCanvas.width = width;
-  gameCanvas.height = height;
+  if (gameCanvas) {
+    gameCanvas.width = width;
+    gameCanvas.height = height;
+  }
+
+  // Escala relativa al tamaño base 700
+  window.canvasScale = width / 700;
 }
 
 // Ajustar en carga y resize
@@ -65,7 +74,7 @@ function scheduleShapeChange() {
   }, CHANGE_INTERVAL);
 }
 
-// Funciones de figuras (sin cambios)
+// Funciones de figuras
 function createShape() {
   let type;
   if (Math.random() < 0.3) type = 'line';
@@ -132,7 +141,7 @@ let bgTransition = 0;
 let bgDirection = 1;
 const bgSpeed = 0.0001;
 
-// Animación principal
+// Animación principal optimizada
 function animate() {
   bgTransition += bgSpeed * bgDirection;
   if (bgTransition >= 1){ bgTransition=1; bgDirection=-1; }
@@ -147,7 +156,11 @@ function animate() {
   ctx.fillStyle = gradient;
   ctx.fillRect(0,0,canvas.width,canvas.height);
 
-  if(Math.random() < 0.2) shapes.push(createShape());
+  // 🔹 Crear menos figuras y limitar a 120
+  if (Math.random() < 0.14 && shapes.length < 120) {
+    shapes.push(createShape());
+  }
+
   shapes.forEach(drawShape);
   updateShapes();
 

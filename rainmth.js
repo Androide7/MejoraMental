@@ -17,11 +17,12 @@ import { renderHighScores } from './renderHighScores.js';
     const finalMessage = document.getElementById("finalMessage");
     const startMessage = document.getElementById("startMessage");
     const hsContainer = document.getElementById("highScoresContainer");
+    // 🌟 Variables globales
+    const bgCanvas = document.getElementById('bgCanvas');
+    const gameCanvas = document.getElementById('gameCanvas');
+    let canvasScale = 1; // Escala relativa al tamaño base 700
 
     if (hsContainer) hsContainer.style.display = 'none';
-
-    canvas.width = 700;
-    canvas.height = 700;
 
     // Limitar longitud y desactivar autofill adicionalmente
     answerInput.setAttribute('maxlength', '4');
@@ -215,21 +216,21 @@ import { renderHighScores } from './renderHighScores.js';
     const createDrop = () => {
       if (!gameRunning) return; // ⬅️ No crear gotas si el juego terminó
       if (raindrops.length >= maxDrops) return;
-    
+
       const { expr, res } = generateOperation();
-    
+
       // ✅ Ajustar posición horizontal según escala del canvas
       const x = rand(DROP_RADIUS * canvasScale, gameCanvas.width - DROP_RADIUS * canvasScale);
-    
+
       // Inicial en y=0
       const y = 0;
-    
+
       const now = performance.now();
-    
+
       // Limitar gotas especiales si estás en contrarreloj o si han pasado más de 3:30 min
       const allowSpecial = !inTimeTrial && (now - gameStartTime < 210000);
       const isSpecial = allowSpecial && Math.random() < SPECIAL_PROB;
-    
+
       raindrops.push({
         x,
         y,
@@ -238,48 +239,48 @@ import { renderHighScores } from './renderHighScores.js';
         special: isSpecial,
         createdAt: now
       });
-    
+
       // Recalcular dropInterval con variación aleatoria
       dropInterval = (BASE_INTERVAL / speed) * (0.8 + Math.random() * 0.4);
     };
-    
+
 
     // ——————————————————————————————————————————————
     // 10) Actualizar posición de gotas
     // ——————————————————————————————————————————————
-// 🔹 Ajustar velocidad de caída según tamaño del canvas
-const updateDrops = () => {
-  if (isFrozen || !gameRunning) return;
+    // 🔹 Ajustar velocidad de caída según tamaño del canvas
+    const updateDrops = () => {
+      if (isFrozen || !gameRunning) return;
 
-  // ⏱️ Velocidad basada en el tamaño relativo del canvas
-  // La idea es que la gota tarde lo mismo en recorrer el alto del canvas
-  const baseCanvasHeight = 700; // referencia (tu tamaño estándar)
-  const normalizedSpeed = speed * (canvas.height / baseCanvasHeight);
+      // ⏱️ Velocidad basada en el tamaño relativo del canvas
+      // La idea es que la gota tarde lo mismo en recorrer el alto del canvas
+      const baseCanvasHeight = 700; // referencia (tu tamaño estándar)
+      const normalizedSpeed = speed * (canvas.height / baseCanvasHeight);
 
-  raindrops = raindrops.filter(drop => {
-    drop.y += normalizedSpeed; // ✅ movimiento proporcional al alto del canvas
+      raindrops = raindrops.filter(drop => {
+        drop.y += normalizedSpeed; // ✅ movimiento proporcional al alto del canvas
 
-    // Si la gota llega al fondo
-    if (drop.y > canvas.height - DROP_RADIUS * canvasScale) {
-      if (!inTimeTrial) {
-        missed++;
-        totalWrong++;
-        consecutiveHits = 0;
-        streak = 0;
-        positiveStreakAfter2Min = 0;
-        checkWarning();
+        // Si la gota llega al fondo
+        if (drop.y > canvas.height - DROP_RADIUS * canvasScale) {
+          if (!inTimeTrial) {
+            missed++;
+            totalWrong++;
+            consecutiveHits = 0;
+            streak = 0;
+            positiveStreakAfter2Min = 0;
+            checkWarning();
 
-        if (missed > MAX_MISSED) {
-          endGame();
-          return false;
+            if (missed > MAX_MISSED) {
+              endGame();
+              return false;
+            }
+          }
+          return false; // eliminar gota
         }
-      }
-      return false; // eliminar gota
-    }
 
-    return true;
-  });
-};
+        return true;
+      });
+    };
 
 
 
@@ -288,12 +289,12 @@ const updateDrops = () => {
     // ——————————————————————————————————————————————
     const drawDrop = ({ x, y, expr, special }) => {
       const style = styles[currentStyleIndex];
-    
+
       // Escalar radio según canvasScale
       const radius = DROP_RADIUS * canvasScale;
-    
+
       const grad = ctx.createRadialGradient(x, y, 1, x, y, radius);
-    
+
       if (special) {
         grad.addColorStop(0, "rgba(165,165,215,0.9)");
         grad.addColorStop(1, "rgba(150,0,150,0.8)");
@@ -312,14 +313,14 @@ const updateDrops = () => {
         grad.addColorStop(1, "rgba(0,160,220,0.9)");
         ctx.strokeStyle = "rgba(235,235,235,0.7)";
       }
-    
+
       ctx.fillStyle = grad;
       ctx.beginPath();
       ctx.arc(x, y, radius, 0, Math.PI * 2);
       ctx.fill();
       ctx.lineWidth = 3 * canvasScale; // Ajustar grosor del borde
       ctx.stroke();
-    
+
       ctx.shadowBlur = 0;
       ctx.shadowColor = "transparent";
       ctx.fillStyle = "white";
@@ -328,103 +329,74 @@ const updateDrops = () => {
       ctx.textBaseline = "middle";
       ctx.fillText(expr, x, y);
     };
-    
-    
+
+
     // ——————————————————————————————————————————————
     // 12) Dibujar todas las gotas + HUD + animaciones de racha
     // ——————————————————————————————————————————————
-// 🌟 Variables globales
-const bgCanvas = document.getElementById('bgCanvas');
-const gameCanvas = document.getElementById('gameCanvas');
-let canvasScale = 1; // Escala relativa al tamaño base 700
+    // 🌧️ Función drawDrops escalada
+    const drawDrops = () => {
+      const scale = canvasScale; // Escala calculada en resizeCanvases
 
-// 📐 Ajustar canvas al tamaño del contenedor
-function resizeCanvases() {
-  const container = document.getElementById('gameContainer');
-  if (!container) return;
+      // 🧹 Limpiar canvas
+      ctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
 
-  const width = container.clientWidth;
-  const height = container.clientHeight;
+      // 💧 Dibujar cada gota (ya escala en drawDrop)
+      raindrops.forEach(drawDrop);
 
-  // Fondo
-  bgCanvas.width = width;
-  bgCanvas.height = height;
+      // 📊 HUD de puntuación y racha
+      ctx.fillStyle = "white";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      const lineHeight = 30 * scale; // Separación proporcional
+      ctx.font = `${20 * scale}px 'Comic Sans MS'`;
 
-  // Juego
-  gameCanvas.width = width;
-  gameCanvas.height = height;
+      ctx.fillText(`Puntuación: ${score}`, 20 * scale, 20 * scale);
 
-  // Escala relativa al tamaño base 700
-  canvasScale = width / 700;
-}
+      if (consecutiveHits > 3) {
+        const multiplier = streak + 1;
+        ctx.fillText(`Racha: x${multiplier}`, 20 * scale, 20 * scale + lineHeight);
+      }
 
-// Ajustar al cargar y al cambiar tamaño de ventana
-window.addEventListener('resize', resizeCanvases);
-resizeCanvases();
+      if (!inTimeTrial) {
+        ctx.fillText(`Errores: ${missed} / ${MAX_MISSED}`, 20 * scale, 20 * scale + lineHeight * 2);
+      }
 
-// 🌧️ Función drawDrops escalada
-const drawDrops = () => {
-  const scale = canvasScale; // Escala calculada en resizeCanvases
+      // ⏱️ Conteo regresivo
+      if (inTimeTrial) {
+        const remainingMs = TIME_TRIAL_DURATION - (performance.now() - timeTrialStart);
+        const remainingS = Math.max(0, Math.ceil(remainingMs / 1000));
+        ctx.save();
+        ctx.fillStyle = "red";
+        ctx.font = `${34 * scale}px 'Comic Sans MS'`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        ctx.fillText(`Tiempo: ${remainingS}s`, bgCanvas.width / 2, 20 * scale);
+        ctx.restore();
+      }
 
-  // 🧹 Limpiar canvas
-  ctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-
-  // 💧 Dibujar cada gota (ya escala en drawDrop)
-  raindrops.forEach(drawDrop);
-
-  // 📊 HUD de puntuación y racha
-  ctx.fillStyle = "white";
-  ctx.textAlign = "left";
-  ctx.textBaseline = "top";
-  const lineHeight = 30 * scale; // Separación proporcional
-  ctx.font = `${20 * scale}px 'Comic Sans MS'`;
-
-  ctx.fillText(`Puntuación: ${score}`, 20 * scale, 20 * scale);
-
-  if (consecutiveHits > 3) {
-    const multiplier = streak + 1;
-    ctx.fillText(`Racha: x${multiplier}`, 20 * scale, 20 * scale + lineHeight);
-  }
-
-  if (!inTimeTrial) {
-    ctx.fillText(`Errores: ${missed} / ${MAX_MISSED}`, 20 * scale, 20 * scale + lineHeight * 2);
-  }
-
-  // ⏱️ Conteo regresivo
-  if (inTimeTrial) {
-    const remainingMs = TIME_TRIAL_DURATION - (performance.now() - timeTrialStart);
-    const remainingS = Math.max(0, Math.ceil(remainingMs / 1000));
-    ctx.save();
-    ctx.fillStyle = "red";
-    ctx.font = `${34 * scale}px 'Comic Sans MS'`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "top";
-    ctx.fillText(`Tiempo: ${remainingS}s`, bgCanvas.width / 2, 20 * scale);
-    ctx.restore();
-  }
-
-  // 🌟 Animaciones de racha
-  const toRemove = [];
-  streakAnimations.forEach((anim, i) => {
-    anim.t += 0.02;
-    if (anim.t >= 1) {
-      toRemove.push(i);
-      return;
-    }
-    const x = anim.x0 + (anim.x1 - anim.x0) * anim.t;
-    const y = anim.y0 + (anim.y1 - anim.y0) * anim.t;
-    const alpha = 1 - anim.t;
-    ctx.save();
-    ctx.globalAlpha = alpha;
-    ctx.font = `${28 * scale}px 'Comic Sans MS'`; // Escala animación
-    ctx.fillStyle = "yellow";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(anim.text, x * scale, y * scale);
-    ctx.restore();
-  });
-  toRemove.reverse().forEach(i => streakAnimations.splice(i, 1));
-};
+      // 🌟 Animaciones de racha
+      const toRemove = [];
+      streakAnimations.forEach((anim, i) => {
+        anim.t += 0.02;
+        if (anim.t >= 1) {
+          toRemove.push(i);
+          return;
+        }
+        const x = anim.x0 + (anim.x1 - anim.x0) * anim.t;
+        const y = anim.y0 + (anim.y1 - anim.y0) * anim.t;
+        const alpha = 1 - anim.t;
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.font = `${28 * scale}px 'Comic Sans MS'`; // Escala animación
+        ctx.fillStyle = "yellow";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(anim.text, x * scale, y * scale);
+        ctx.restore();
+      });
+      toRemove.reverse().forEach(i => streakAnimations.splice(i, 1));
+    };
 
 
 
@@ -628,9 +600,9 @@ const drawDrops = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         return; // ⬅️ Detener el bucle hasta reiniciar
       }
-    
+
       const now = performance.now();
-    
+
       // 1) Mostrar mensaje “¡CONTRARRELOJ!” antes de iniciar
       if (timeTrialPending) {
         drawDrops(); // Dibuja fondo y gotas actuales
@@ -640,99 +612,99 @@ const drawDrops = () => {
         ctx.textAlign = "center";
         ctx.fillText("¡CONTRARRELOJ!", canvas.width / 2, canvas.height / 2);
         ctx.restore();
-    
+
         // Después de 1 segundo, comienza el contrarreloj
         if (now - timeTrialPendingStart >= 1000) {
           timeTrialPending = false;
           inTimeTrial = true;
           timeTrialStart = now;
-    
+
           // Limpiar estado
           raindrops = [];
           missed = 0;
-    
+
           // ✅ Agregar clase visual al canvas
           canvas.classList.add('time-trial-mode');
-    
+
           // Aumentar velocidad
           speed *= 1.6;
         }
-    
+
         requestAnimationFrame(gameLoop);
         return;
       }
-    
+
       // 2) Lógica durante contrarreloj
       if (inTimeTrial) {
         const ttElapsed = now - timeTrialStart;
-    
+
         // Mostrar advertencia en los últimos 3 segundos
         if (ttElapsed >= TIME_TRIAL_DURATION - 3000) {
           canvas.classList.add('time-trial-warning');
         }
-    
+
         // Termina el contrarreloj
         if (ttElapsed >= TIME_TRIAL_DURATION) {
           inTimeTrial = false;
-    
+
           // ✅ Quitar clases visuales
           canvas.classList.remove('time-trial-mode', 'time-trial-warning');
-    
+
           speed /= 1.5;
           missed = 0;
         }
       }
-    
+
       // 3) Aumentar dificultad después de 3 minutos
       if (now - gameStartTime >= 180_000) {
         maxDrops = 9;
       }
-    
+
       // 4) Mover y dibujar
       updateDrops();
       drawDrops();
-    
+
       // 5) Ajuste de dificultad automática
       if (adaptiveEnabled && now - lastAdaptiveCheck > 5000) {
         lastAdaptiveCheck = now;
-    
+
         if (responseTimes.length >= 5) {
           const avgResponse = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
-    
+
           if (avgResponse < 2000 && speed < 2.5) {
             speed += 0.05;
           } else if (avgResponse > 3500 && speed > 1.2) {
             speed -= 0.05;
           }
-    
+
           dropInterval = BASE_INTERVAL / speed;
         }
-    
+
         if (now >= adaptiveEnd) {
           adaptiveEnabled = false;
           responseTimes = [];
         }
       }
-    
+
       // 6) Crear nuevas gotas
       if (now - lastTime > dropInterval) {
         createDrop();
         lastTime = now;
       }
-    
+
       // 7) Cambiar estilo visual cada 30 segundos
       if (!window.lastStyleChange) window.lastStyleChange = now;
       if (!window.currentStyleIndex && window.currentStyleIndex !== 0) window.currentStyleIndex = 0;
-    
+
       if (now - window.lastStyleChange >= 30000) {
         window.currentStyleIndex = (window.currentStyleIndex + 1) % styles.length;
         window.lastStyleChange = now;
-    
+
         canvas.classList.remove(...styles);
         const currentStyle = styles[window.currentStyleIndex];
         canvas.classList.add(currentStyle);
       }
-    
+
       requestAnimationFrame(gameLoop);
     };
 
@@ -771,104 +743,126 @@ const drawDrops = () => {
     // 19) Iniciar partida
     // ——————————————————————————————————————————————
 
-function startGameReal() {
-  if (gameRunning) return;
-  if (hsContainer) hsContainer.style.display = 'none';
-  startMessage?.remove();
+    function startGameReal() {
+      if (gameRunning) return;
+      if (hsContainer) hsContainer.style.display = 'none';
+      startMessage?.remove();
 
-  // — Inicialización de variables del juego
-  raindrops = [];
-  speed = 1.5;
-  score = 0;
-  missed = 0;
-  totalWrong = 0;
-  maxDrops = 3;
-  streak = 0;
-  hitTimes = [];
-  missTimes = [];
-  lastAdaptiveCheck = performance.now();
-  streakAnimations.length = 0;
+      // — Inicialización de variables del juego
+      raindrops = [];
+      speed = 1.5;
+      score = 0;
+      missed = 0;
+      totalWrong = 0;
+      maxDrops = 3;
+      streak = 0;
+      hitTimes = [];
+      missTimes = [];
+      lastAdaptiveCheck = performance.now();
+      streakAnimations.length = 0;
 
-  gameStartTime = performance.now();
-  gameRunning = true;
+      gameStartTime = performance.now();
+      gameRunning = true;
 
-  answerInput.style.display = 'inline-block';
-  adaptiveStart = performance.now();
-  adaptiveEnd = adaptiveStart + 60000;
-  adaptiveEnabled = true;
+      answerInput.style.display = 'inline-block';
+      adaptiveStart = performance.now();
+      adaptiveEnd = adaptiveStart + 60000;
+      adaptiveEnabled = true;
 
-  canvas.classList.remove('warning');
-  endMessageDiv.style.display = 'none';
+      canvas.classList.remove('warning');
+      endMessageDiv.style.display = 'none';
 
-  dropInterval = BASE_INTERVAL / speed;
-  lastTime = performance.now();
-  answerInput.focus();
+      dropInterval = BASE_INTERVAL / speed;
+      lastTime = performance.now();
+      answerInput.focus();
 
-  // — Iniciar fondo dinámico
-  window.bgAnimation.start();
+      // — Iniciar fondo dinámico
+      window.bgAnimation.start();
 
-  requestAnimationFrame(gameLoop);
-}
+      requestAnimationFrame(gameLoop);
+    }
 
-// Iniciar con conteo regresivo
-function startGame() {
-  playCountdown(startGameReal);
-}
+    // Iniciar con conteo regresivo
+    function startGame() {
+      playCountdown(startGameReal);
+    }
 
-// ——————————————————————————————————————————————
-// 20) Finalizar partida
-// ——————————————————————————————————————————————
-const endGame = async () => {
-  gameRunning = false;
-  raindrops = []; // limpieza inmediata
+    // ——————————————————————————————————————————————
+    // 20) Finalizar partida
+    // ——————————————————————————————————————————————
+    const endGame = async () => {
+      gameRunning = false;
+      raindrops = []; // limpieza inmediata
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // borra canvas principal
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // borra canvas principal
 
-  answerInput.style.display = 'none';
-  finalMessage.innerHTML = `
+      answerInput.style.display = 'none';
+      finalMessage.innerHTML = `
     <p class="final-msg">¡Perdiste! Puntuación final: ${score}</p>
     <p class="final-msg">Incorrectas: <strong>${totalWrong}</strong></p>
     <p class="final-msg special">¡Puedes Superarlo!</p>
   `;
-  endMessageDiv.style.display = 'block';
+      endMessageDiv.style.display = 'block';
 
-  // — Detener fondo dinámico
-  window.bgAnimation.stop();
+      // — Detener fondo dinámico
+      window.bgAnimation.stop();
 
-  await renderHighScores(score);
+      await renderHighScores(score);
 
-  setTimeout(() => {
-    if (endMessageDiv.style.display === 'block') {
-      startButton.textContent = 'Reiniciar';
-      startButton.style.display = 'block';
-      startButton.disabled = false;
+      setTimeout(() => {
+        if (endMessageDiv.style.display === 'block') {
+          startButton.textContent = 'Reiniciar';
+          startButton.style.display = 'block';
+          startButton.disabled = false;
+        }
+      }, 3000);
+    };
+// ——————————————————————————————————————————————
+// Evento global para iniciar el juego con Enter
+// ——————————————————————————————————————————————
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter") {
+    // Si el juego NO está corriendo, iniciar/reiniciar
+    if (!gameRunning) {
+      e.preventDefault();
+      startGame();
     }
-  }, 3000);
-};
+  }
+});
 
     // ——————————————————————————————————————————————
     // 21) Eventos sobre input y botón
     // ——————————————————————————————————————————————
+    let autoSubmitTimer; // ⏱️ temporizador para el envío automático
+
     answerInput.addEventListener("input", () => {
       // Eliminar espacios automáticamente
       answerInput.value = answerInput.value.replace(/\s+/g, '');
-
+    
       // Limitar a máximo 4 caracteres
       if (answerInput.value.length > 4) {
         answerInput.value = answerInput.value.slice(0, 4);
       }
+    
+      // 🔄 Reiniciar temporizador cada vez que cambia el input
+      clearTimeout(autoSubmitTimer);
+      autoSubmitTimer = setTimeout(() => {
+        if (gameRunning) {
+          checkAnswer(); // ✅ enviar automáticamente
+        }
+      }, 900); // 2.5 segundos
     });
-
+    
     // Control de teclado
     answerInput.addEventListener("keydown", e => {
       const raw = answerInput.value.trim();
       const isValid = /^\d+$/.test(raw); // Solo dígitos
-
+    
       // Bloquear teclas que no sean numéricas, Backspace o Enter
       if (!/[0-9]/.test(e.key) && !['Backspace', 'Enter'].includes(e.key)) {
         e.preventDefault();
       }
-
+    
       // Bloquear Enter si el input está vacío o no es válido
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -877,22 +871,18 @@ const endGame = async () => {
         }
       }
     });
-
+    
     // Botón de inicio
     startButton.addEventListener("click", startGame);
-
+    
     // Calcular primer dropInterval
     dropInterval = BASE_INTERVAL / speed;
+    
+    // Enfocar input al hacer clic en el canvas
+    canvas.addEventListener('click', () => {
+      answerInput.focus();
+    });
+    
+  }); // Cierra DOMContentLoaded
+})(); // Cierra IIFE
 
-  });
-
-  // Suponiendo que ya tienes esto:
-  const answerInput = document.getElementById('answerInput');
-  const canvas = document.getElementById('gameCanvas');  // o tu container principal
-
-  // Al hacer clic en el canvas, enfocar el input
-  canvas.addEventListener('click', () => {
-    answerInput.focus();
-  });
-
-})();
